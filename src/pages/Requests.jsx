@@ -1,59 +1,52 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addRequests, removeRequest } from '../utils/requestSlice';
 import { Loader } from 'lucide-react';
 
 const Requests = () => {
 
-    const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const requests = useSelector((store) => store.requests);
+  const requests = useSelector((store) => store.requests);
 
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    const handleReviewRequest = async (status, _id) => {
-        try {
+  const handleReviewRequest = async (status, _id) => {
+    try {
+       await axios.post(
+        `${BASE_URL}/request/review/${status}/${_id}`,
+        {},
+        { withCredentials: true }
+      );
 
-            const res = await axios.post(BASE_URL + "/request/review/" + status+ "/" + _id,
-                {},
-                {withCredentials : true},
-            );
-
-            // dispatch an action
-            dispatch(removeRequest(_id));
-            
-        } catch (error) {
-            console.log(error.message);
-            
-        }
+      dispatch(removeRequest(_id));
+    } catch (error) {
+      return error.message;
     }
+  };
 
-    const fetchRequests = async () => {
-        setLoading(true);
-        try {
+  const fetchRequests = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/user/requests/received`, {
+        withCredentials: true,
+      });
 
-            const res = await axios.get(BASE_URL + "/user/requests/received" ,
-                {withCredentials : true},
-            )
-
-            // dispatch anction
-            dispatch(addRequests(res?.data?.data));
-            
-        } catch (error) {
-            console.log(error.message);
-        } finally {
-          setLoading(false);
-        }
+      dispatch(addRequests(res?.data?.data));
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false); 
     }
+  };
 
+  useEffect(() => {
+    fetchRequests();
+  }, []);
 
-     useEffect( () => {
-        fetchRequests();
-     }, []);
-      
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -71,17 +64,17 @@ const Requests = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pt-4 pb-10 px-4">
+    <div className="max-w-7xl mx-auto pt-4 pb-10 px-4">
       <h1 className="text-center text-4xl font-bold text-white mb-10">Requests</h1>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {requests.map((request, index) => {
           const { firstName, lastName, photoUrl, age, gender, about, skills } = request.fromUserId;
 
           return (
             <div
               key={index}
-              className="flex flex-col md:flex-row items-center gap-6 p-6 bg-base-200 rounded-2xl shadow-lg"
+              className="flex flex-col md:flex-row items-center gap-6 p-6 bg-base-200 rounded-2xl shadow-lg h-full"
             >
               <div>
                 <img
@@ -101,7 +94,6 @@ const Requests = () => {
 
                 {skills && skills.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-
                     {skills.map((skill, idx) => (
                       <span
                         key={idx}
@@ -110,20 +102,26 @@ const Requests = () => {
                         {skill}
                       </span>
                     ))}
-
                   </div>
                 )}
 
                 {about && <p className="text-gray-300 mt-2">{about}</p>}
-                
               </div>
 
-              <div>
-                 <button className="btn btn-primary mx-2" onClick={handleReviewRequest("rejected", request._id)}>Reject</button>
+              <div className="flex gap-2 mt-4 my-2 md:mt-0 md:flex-col">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => handleReviewRequest('rejected', request._id)}
+                >
+                  Reject
+                </button>
 
-                 <button className="btn btn-secondary mx-2" onClick={handleReviewRequest("accepted", request._id)}>
-                    Accept
-                  </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => handleReviewRequest('accepted', request._id)}
+                >
+                  Accept
+                </button>
               </div>
             </div>
           );

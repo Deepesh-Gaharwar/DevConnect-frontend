@@ -14,16 +14,14 @@ const Connections = () => {
 
   const [loading, setLoading] = useState(false);
 
-
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/user/connections`,
-         {withCredentials: true,});
+      const res = await axios.get(`${BASE_URL}/user/connections`, {
+        withCredentials: true,
+      });
 
-      // dispatch an action   
       dispatch(addConnections(res?.data?.data));
-
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -52,17 +50,17 @@ const Connections = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
+    <div className="max-w-7xl mx-auto py-10 px-4">
       <h1 className="text-center text-4xl font-bold text-white mb-10">Your Connections</h1>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {connections.map((connection, index) => {
           const { firstName, lastName, photoUrl, age, gender, about, skills } = connection;
 
           return (
             <div
               key={index}
-              className="flex flex-col md:flex-row items-center gap-6 p-6 bg-base-200 rounded-2xl shadow-lg"
+              className="flex flex-col md:flex-row items-center gap-6 p-6 bg-base-200 rounded-2xl shadow-lg h-full"
             >
               <div>
                 <img
@@ -82,7 +80,6 @@ const Connections = () => {
 
                 {skills && skills.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-
                     {skills.map((skill, idx) => (
                       <span
                         key={idx}
@@ -91,12 +88,10 @@ const Connections = () => {
                         {skill}
                       </span>
                     ))}
-
                   </div>
                 )}
 
                 {about && <p className="text-gray-300 mt-2">{about}</p>}
-                
               </div>
             </div>
           );

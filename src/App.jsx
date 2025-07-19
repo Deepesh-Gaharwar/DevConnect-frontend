@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import Connections from "./pages/Connections"
 import Requests from "./pages/Requests"
+import ForgotPassword from "./pages/ForgotPassword"
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/connections" element = {<Connections/>}/>
                 <Route path="/requests" element = {<Profile/>}/>
                 <Route path="/requests/received" element = {<Requests/>}/>
+                <Route path="/forgot-password" element = {<ForgotPassword/>}/>
 
             </Route>
               
