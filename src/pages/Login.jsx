@@ -12,6 +12,7 @@ const Login = () => {
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const dispatch = useDispatch();
 
@@ -38,7 +39,8 @@ const Login = () => {
       return navigate("/");
 
     } catch (error) {
-      console.log(error.message);
+      setError(error?.response?.data);
+      console.log(error?.response?.data || "Something went wrong while Login!");
     }
   };
 
@@ -82,6 +84,8 @@ const Login = () => {
               </button>
             </div>
           </label>
+
+          <p className='text-red-500'> {error} </p>
 
           {/* Login Button */}
           <div className="card-actions justify-center mt-4">
