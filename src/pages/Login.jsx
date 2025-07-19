@@ -71,19 +71,24 @@ const Login = () => {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 placeholder="••••••••"
-                className={`input w-full pr-10 ${password.length === 0 ? "input-bordered" : isPasswordStrong ? "input-success" : "input-bordered"}`}
+                className={`input w-full pr-12 ${password.length === 0 ? "input-bordered" : isPasswordStrong ? "input-success" : "input-bordered"}`}
                 required
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                onClick={() => setShowPassword(prev => !prev)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+
+              {/* Show/hide password icon */}
+              {password.length > 0 && (
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer z-10"
+                  onClick={() => setShowPassword(prev => !prev)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              )}
             </div>
           </label>
+
 
           <p className='text-red-500'> {error} </p>
 
