@@ -1,19 +1,24 @@
 import React from 'react'
-import EditProfile from '../components/EditProfile';
-import { useSelector } from 'react-redux';
+import EditProfile from '../components/EditProfile'
+import { useSelector } from 'react-redux'
+import { Loader } from 'lucide-react'
 
 const Profile = () => {
+  const user = useSelector((store) => store.user)
 
-    const user = useSelector( (store) => store.user);
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <Loader className="animate-spin w-10 h-10 text-primary" />
+      </div>
+    )
+  }
 
   return (
-    user && 
-        (<div>
-
-            <EditProfile user={user} />
-         
-        </div>)
+    <div>
+      <EditProfile user={user} />
+    </div>
   )
 }
 
-export default Profile;
+export default Profile

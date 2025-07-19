@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { addRequests } from '../utils/requestSlice';
+import { addRequests, removeRequest } from '../utils/requestSlice';
 import { Loader } from 'lucide-react';
 
 const Requests = () => {
@@ -13,6 +13,23 @@ const Requests = () => {
     const requests = useSelector((store) => store.requests);
 
     const [loading, setLoading] = useState(false);
+
+    const handleReviewRequest = async (status, _id) => {
+        try {
+
+            const res = await axios.post(BASE_URL + "/request/review/" + status+ "/" + _id,
+                {},
+                {withCredentials : true},
+            );
+
+            // dispatch an action
+            dispatch(removeRequest(_id));
+            
+        } catch (error) {
+            console.log(error.message);
+            
+        }
+    }
 
     const fetchRequests = async () => {
         setLoading(true);
@@ -48,13 +65,13 @@ const Requests = () => {
   if (!requests || requests.length === 0) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
-        <h1 className="text-2xl font-semibold text-gray-400">No Requests Found</h1>
+        <h1 className="text-3xl font-bold text-gray-400">No Requests Found</h1>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
+    <div className="max-w-4xl mx-auto pt-4 pb-10 px-4">
       <h1 className="text-center text-4xl font-bold text-white mb-10">Requests</h1>
 
       <div className="space-y-6">
@@ -102,8 +119,11 @@ const Requests = () => {
               </div>
 
               <div>
-                 <button className="btn btn-primary mx-2">Reject</button>
-                 <button className="btn btn-secondary mx-2">Accept</button>
+                 <button className="btn btn-primary mx-2" onClick={handleReviewRequest("rejected", request._id)}>Reject</button>
+
+                 <button className="btn btn-secondary mx-2" onClick={handleReviewRequest("accepted", request._id)}>
+                    Accept
+                  </button>
               </div>
             </div>
           );

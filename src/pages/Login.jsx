@@ -36,7 +36,7 @@ const Login = () => {
       // dispatch an action
       dispatch(addUser(res.data));
 
-      toast.success(`Welcome ${res?.data?.firstName}, Logged in successfully!`, {
+      toast.info(`Welcome ${res?.data?.firstName}, Logged in successfully!`, {
         style: { whiteSpace: "nowrap",minWidth: "400px", }
       });
 
