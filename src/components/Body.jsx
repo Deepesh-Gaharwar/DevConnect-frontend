@@ -5,6 +5,7 @@ import Footer from './Footer';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { toast } from 'react-toastify';
 
 const Body = () => {
 
@@ -29,12 +30,12 @@ const Body = () => {
       dispatch(addUser(res.data));
 
     } catch (error) {
+
+      toast.error(error.message);
       
       if(error.status === 401){
         navigate("/login");
       } 
-
-      console.log(error.message);
     }
   };
   

@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux';
 import { addFeed } from '../utils/feedSlice';
 import UserCard from '../components/UserCard';
+import { toast } from 'react-toastify';
 
 const Feed = () => {
     
@@ -17,15 +18,15 @@ const Feed = () => {
       if(feed) return;
 
       try {
-              const res = await axios.get(BASE_URL + "/user/feed",
-                {withCredentials : true}
-              );
-        
-              // dispatch an action
-              dispatch(addFeed(res.data));
+        const res = await axios.get(BASE_URL + "/user/feed",
+          {withCredentials : true}
+        );
+  
+        // dispatch an action
+        dispatch(addFeed(res.data));
       } catch (error) {
 
-        console.log(error.mesage);
+        toast.error(error.message);
         
       }
 

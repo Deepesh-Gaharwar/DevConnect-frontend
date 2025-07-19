@@ -4,10 +4,11 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Login = () => {
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL;   
+  const BASE_URL = import.meta.env.VITE_BASE_URL;  
 
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
@@ -35,12 +36,18 @@ const Login = () => {
       // dispatch an action
       dispatch(addUser(res.data));
 
+      toast.success(`Welcome ${res?.data?.firstName}, Logged in successfully!`, {
+        style: { whiteSpace: "nowrap",minWidth: "400px", }
+      });
+
       // navigate 
       return navigate("/");
 
+      
+
     } catch (error) {
       setError(error?.response?.data);
-      console.log(error?.response?.data || "Something went wrong while Login!");
+      toast.error(error?.response?.data);
     }
   };
 

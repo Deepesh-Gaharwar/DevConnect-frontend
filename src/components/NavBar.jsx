@@ -4,6 +4,7 @@ import { UserCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { removeUser } from '../utils/userSlice';
+import { toast } from 'react-toastify';
 
 const NavBar = () => {
 
@@ -27,10 +28,12 @@ const NavBar = () => {
           // dispatch an action
           dispatch(removeUser());
 
+          toast.success("Logged Out Successfully!");
+
           navigate("/login");
             
         } catch (error) {
-            console.log(error.message);
+            toast.error(error.message);
         }
     }
 

@@ -7,6 +7,8 @@ import { Provider } from "react-redux"
 import appStore from "./utils/appStore"
 import Feed from "./pages/Feed"
 import Profile from "./pages/Profile"
+import { ToastContainer } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
@@ -23,12 +25,28 @@ function App() {
                 <Route path="/" element = {<Feed/>}/>
                 <Route path="/login" element = {<Login/>}/>
                 <Route path="/profile" element = {<Profile/>}/>
+                <Route path="/connections" element = {<Profile/>}/>
+                <Route path="/requests" element = {<Profile/>}/>
 
             </Route>
               
           </Routes>
 
         </BrowserRouter>
+
+        {/*  ToastContainer  */}
+        <ToastContainer 
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        /> 
       
       </Provider>
     </>
