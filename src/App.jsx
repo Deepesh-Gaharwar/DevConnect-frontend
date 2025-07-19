@@ -9,6 +9,7 @@ import Feed from "./pages/Feed"
 import Profile from "./pages/Profile"
 import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import Connections from "./pages/Connections"
 
 function App() {
 
@@ -25,7 +26,7 @@ function App() {
                 <Route path="/" element = {<Feed/>}/>
                 <Route path="/login" element = {<Login/>}/>
                 <Route path="/profile" element = {<Profile/>}/>
-                <Route path="/connections" element = {<Profile/>}/>
+                <Route path="/connections" element = {<Connections/>}/>
                 <Route path="/requests" element = {<Profile/>}/>
 
             </Route>
