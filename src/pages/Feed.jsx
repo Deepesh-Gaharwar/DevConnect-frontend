@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addFeed } from '../utils/feedSlice';
 import UserCard from '../components/UserCard';
 import { toast } from 'react-toastify';
-import { Loader } from 'lucide-react';
+import { Loader, Users } from 'lucide-react';
 
 const Feed = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -48,8 +48,10 @@ const Feed = () => {
       ) : feed?.data?.length > 0 ? (
         <UserCard userInfo={feed.data[0]} />
       ) : (
-        <div className="text-center text-gray-500">
-          No users in your feed right now.
+        <div className="text-center text-gray-400 flex flex-col items-center space-y-2">
+          <Users className="h-10 w-10 text-gray-400" />
+          <p className="text-lg font-medium">No users in your feed right now</p>
+          <p className="text-sm text-gray-500">Check back later or explore new connections!</p>
         </div>
       )}
     </div>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { addConnections } from '../utils/connectionSlice';
-import { Loader } from 'lucide-react';
+import { Loader, Users2 } from 'lucide-react';
 
 const Connections = () => {
 
@@ -43,8 +43,10 @@ const Connections = () => {
 
   if (!connections || connections.length === 0) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
-        <h1 className="text-2xl font-semibold text-gray-400">No Connections Found</h1>
+      <div className="flex flex-col items-center justify-center h-[60vh] space-y-3 text-gray-400">
+        <Users2 className="w-12 h-12" />
+        <h1 className="text-2xl font-semibold">No Connections Found</h1>
+        <p className="text-sm text-gray-500">Start building your network — connect with like-minded people!</p>
       </div>
     );
   }

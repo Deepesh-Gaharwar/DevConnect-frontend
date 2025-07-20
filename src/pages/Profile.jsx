@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { Loader } from 'lucide-react'
 
 const Profile = () => {
-  const user = useSelector((store) => store.user)
+  const user = useSelector((store) => store.user);
 
   if (!user) {
     return (

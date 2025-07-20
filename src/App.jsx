@@ -1,5 +1,4 @@
 import React from "react"
-import NavBar from "./components/NavBar"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Body from "./components/Body"
 import Login from "./pages/Login"
@@ -25,7 +24,7 @@ function App() {
 
             <Route path="/" element = {<Body/>}> 
                 
-                <Route path="/" element = {<Feed/>}/>
+                <Route index element = {<Feed/>}/>
                 <Route path="/login" element = {<Login/>}/>
                 <Route path="/profile" element = {<Profile/>}/>
                 <Route path="/connections" element = {<Connections/>}/>

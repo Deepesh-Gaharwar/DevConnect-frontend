@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addRequests, removeRequest } from '../utils/requestSlice';
-import { Loader } from 'lucide-react';
+import { Loader, MailX  } from 'lucide-react';
 
 const Requests = () => {
 
@@ -57,8 +57,10 @@ const Requests = () => {
 
   if (!requests || requests.length === 0) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
-        <h1 className="text-3xl font-bold text-gray-400">No Requests Found</h1>
+      <div className="flex flex-col items-center justify-center h-[60vh] space-y-3 text-gray-400">
+        <MailX className="w-12 h-12" />
+        <h1 className="text-2xl font-semibold">No Requests Found</h1>
+        <p className="text-sm text-gray-500">You're all caught up! New requests will appear here.</p>
       </div>
     );
   }

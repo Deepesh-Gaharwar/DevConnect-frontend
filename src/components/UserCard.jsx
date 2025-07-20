@@ -24,7 +24,6 @@ const UserCard = ({ userInfo }) => {
     }
   };
 
-  // 🔧 Make sure skills is an array (in case backend sends a comma-separated string)
   const skillsArray =
     typeof skills === 'string' ? skills.split(',').map((s) => s.trim()) : skills;
 

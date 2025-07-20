@@ -62,7 +62,7 @@ const NavBar = () => {
               <li><Link to="/connections">Connections</Link></li>
               <li><Link to="/requests/received">Requests</Link></li>
               <li><Link to="/forgot-password">Forgot Password</Link></li>
-              <li><Link onClick={handleLogout}>Logout</Link></li>
+              <li><button onClick={handleLogout}>Logout</button></li>
             </ul>
           </div>
 
@@ -93,7 +93,7 @@ const NavBar = () => {
               <li><Link to="/connections">Connections</Link></li>
               <li><Link to="/requests/received">Requests</Link></li>
               <li><Link to="/forgot-password">Forgot Password</Link></li>
-              <li><Link onClick={handleLogout}>Logout</Link></li>
+              <li><button onClick={handleLogout}>Logout</button></li>
             </ul>
           </div>
         </div>
