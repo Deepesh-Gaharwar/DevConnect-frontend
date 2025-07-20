@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { Eye, EyeOff, Loader } from 'lucide-react';
+import { Eye, EyeOff, Loader, User, Mail, Lock } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
 import { Link, useNavigate } from 'react-router-dom';
@@ -72,42 +72,64 @@ const Login = () => {
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center px-4 py-12">
+    <div className="w-full h-screen flex justify-center items-center px-4 py-12 bg-base-100">
       <div className="card w-full max-w-md bg-base-200 shadow-xl">
-        <div className="card-body space-y-4">
-          <h2 className="card-title justify-center text-2xl font-bold text-primary">{isLoginForm ? "Login" : "Sign Up"}</h2>
+        {/* Header Tabs */}
+        <div className="flex">
+          <button
+            onClick={() => setIsLoginForm(true)}
+            className={`w-1/2 py-3 cursor-pointer text-lg font-medium transition-all rounded-none border-b-2 ${
+              isLoginForm
+                ? 'border-primary text-primary'
+                : 'border-base-300 text-base-content'
+            }`}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setIsLoginForm(false)}
+            className={`w-1/2 py-3 cursor-pointer text-lg font-medium transition-all rounded-none border-b-2 ${
+              !isLoginForm
+                ? 'border-primary text-primary'
+                : 'border-base-300 text-base-content'
+            }`}
+          >
+            Sign Up
+          </button>
+        </div>
 
+        {/* Form Body */}
+        <div className="card-body space-y-4 min-h-[400px]">
+          <h2 className="text-center text-2xl font-semibold text-primary">
+            {isLoginForm ? 'Login' : 'Sign Up'}
+          </h2>
 
-        { !isLoginForm &&
-            <>
-               {/* First + Last Name */}
-                <div className="flex gap-4">
-                  <label className="form-control w-full">
-                    <span className="label-text mb-1">First Name</span>
-                    <input
-                      type="text"
-                      value={firstName}
-                      className='input input-bordered w-full'
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                  </label>
+          {/* Conditionally show Name inputs for Sign Up */}
+          {!isLoginForm && (
+            <div className="flex gap-4">
+              <label className="form-control w-full">
+                <span className="label-text mb-1">First Name</span>
+                <input
+                  type="text"
+                  value={firstName}
+                  className="input input-bordered w-full"
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </label>
 
-                  <label className="form-control w-full">
-                    <span className="label-text mb-1">Last Name</span>
-                    <input
-                      type="text"
-                      value={lastName}
-                      className='input input-bordered w-full'
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </label>
-                </div>
-              
+              <label className="form-control w-full">
+                <span className="label-text mb-1">Last Name</span>
+                <input
+                  type="text"
+                  value={lastName}
+                  className="input input-bordered w-full"
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </label>
+            </div>
+          )}
 
-            </>
-        }
-
-          {/* Email Input */}
+          {/* Email */}
           <label className="form-control w-full">
             <span className="label-text mb-1">Email Address</span>
             <input
@@ -126,7 +148,7 @@ const Login = () => {
             />
           </label>
 
-          {/* Password Input */}
+          {/* Password */}
           <label className="form-control w-full">
             <span className="label-text mb-1">Password</span>
             <div className="relative">
@@ -144,13 +166,11 @@ const Login = () => {
                 required
                 onChange={(e) => setPassword(e.target.value)}
               />
-              
-              {/* Toggle Visibility Icon */}
               {password.length > 0 && (
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 z-10 cursor-pointer"
-                  onClick={() => setShowPassword(prev => !prev)}
+                  onClick={() => setShowPassword((prev) => !prev)}
                 >
                   {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                 </button>
@@ -158,33 +178,31 @@ const Login = () => {
             </div>
           </label>
 
+          {/* Error message */}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <p className="text-red-500"> {error} </p>
-
-          {/* Login / Sign Up Button */}
-          <div className="card-actions justify-center mt-4">
-              <button
-                className="btn btn-primary w-full flex items-center justify-center gap-2"
-                onClick={isLoginForm ? handleLogin : handleSignUp}
-                disabled={loading}
-              >
-                {loading ? <Loader className="animate-spin w-5 h-5" /> : isLoginForm ? 'Login' : 'Sign up'}
-              </button>
-          </div>
-
-          <p className="text-center text-xs text-gray-500 mt-2">
-            {isLoginForm ? "Don't have an account? " : 'Already have an account? '}
-            <span
-              className="link link-primary cursor-pointer"
-              onClick={() => setIsLoginForm(!isLoginForm)}
+          {/* Submit Button */}
+          <div className="mt-2">
+            <button
+              className="btn btn-primary w-full flex items-center justify-center gap-2"
+              onClick={isLoginForm ? handleLogin : handleSignUp}
+              disabled={loading}
             >
-              {loading ? 'Loading...' : isLoginForm ? 'Sign up' : 'Login'}
-            </span>
-          </p>
+              {loading ? (
+                <Loader className="animate-spin w-5 h-5" />
+              ) : isLoginForm ? (
+                'Login'
+              ) : (
+                'Sign up'
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
+
+
 };
 
 export default Login;

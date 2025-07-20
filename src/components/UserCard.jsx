@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { removeUserFromFeed } from '../utils/feedSlice';
+import { ImageOff } from 'lucide-react';
 
 const UserCard = ({ userInfo }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -29,13 +30,21 @@ const UserCard = ({ userInfo }) => {
 
   return (
     <div className="card bg-base-300 w-96 shadow-sm">
-      <figure>
-        <img
-          src={photoUrl}
-          alt="user photo"
-          className="w-full h-75 object-cover rounded-lg shadow"
-        />
+      <figure className="w-full h-75 rounded-lg overflow-hidden bg-base-100 flex items-center justify-center">
+        {photoUrl ? (
+          <img
+            src={photoUrl}
+            alt="user photo"
+            className="w-full h-75 object-cover rounded-lg shadow"
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-gray-400">
+            <ImageOff size={48} />
+            <span className="text-sm mt-2">No Image Available</span>
+          </div>
+        )}
       </figure>
+
 
       <div className="card-body text-white">
         <h2 className="card-title">{firstName + ' ' + lastName}</h2>
@@ -45,21 +54,24 @@ const UserCard = ({ userInfo }) => {
 
         <p className="mt-2">{about}</p>
 
-        {/* ✅ Skills badge section */}
-        {skillsArray && skillsArray.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
-            {skillsArray.map((skill, idx) => (
-              <span
-                key={idx}
-                className="badge badge-primary badge-outline text-sm px-3 py-1 rounded-full"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        )}
+            {Array.isArray(skillsArray) &&
+                skillsArray.filter((skill) => skill.trim() !== '').length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {skillsArray
+                      .filter((skill) => skill.trim() !== '')
+                      .map((skill, idx) => (
+                        <span
+                          key={idx}
+                          className="badge badge-primary badge-outline text-sm px-3 py-1 rounded-full"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                  </div>
+            )}
 
-        {/* ✅ Buttons */}
+
+        {/*  Buttons */}
         <div className="card-actions justify-center my-4">
           <button
             type="button"

@@ -56,7 +56,7 @@ const Body = () => {
   return (
     <div className="flex flex-col min-h-screen bg-base-100">
       <NavBar />
-      <div className="flex-grow px-4 pt-2 pb-8">
+      <div className="flex-grow px-4  pb-8">
         <Outlet />
       </div>
       <Footer />
