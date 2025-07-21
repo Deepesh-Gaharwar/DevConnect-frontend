@@ -33,9 +33,8 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      dispatch(addUser(res.data));
-
-      toast.info(`Welcome back, ${res?.data?.firstName}!`);
+      dispatch(addUser(res?.data?.data));
+      toast.info(`Welcome back, ${res?.data?.data?.firstName}!`);
 
       navigate('/'); 
     } catch (error) {
@@ -182,9 +181,9 @@ const Login = () => {
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           {/* Submit Button */}
-          <div className="mt-2">
+          <div className="mt-6 flex justify-center">
             <button
-              className="btn btn-primary w-full flex items-center justify-center gap-2"
+              className="btn btn-primary w-[180px] flex items-center justify-center gap-2"
               onClick={isLoginForm ? handleLogin : handleSignUp}
               disabled={loading}
             >

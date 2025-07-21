@@ -29,7 +29,7 @@ const UserCard = ({ userInfo }) => {
     typeof skills === 'string' ? skills.split(',').map((s) => s.trim()) : skills;
 
   return (
-    <div className="card bg-base-300 w-96 shadow-sm">
+    <div className="card bg-base-300 w-96 shadow-sm mt-5">
       <figure className="w-full h-75 rounded-lg overflow-hidden bg-base-100 flex items-center justify-center">
         {photoUrl ? (
           <img

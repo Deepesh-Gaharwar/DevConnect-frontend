@@ -23,15 +23,20 @@ const NavBar = () => {
     }
   };
 
+  
+  const isAuthenticated = user?._id && user?._persist?.rehydrated;
+
   return (
-    <div className="navbar bg-base-300 shadow-sm px-4">
+    <div className={`navbar px-4 sticky top-0 z-50 transition-all duration-300
+      bg-base-300/80 backdrop-blur-md border-b border-base-200/30
+      shadow-sm hover:bg-base-300/90`}>
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-2xl">
-           🕸️ DevConnect
+          🕸️ DevConnect
         </Link>
       </div>
 
-      {user && (
+      {isAuthenticated ? (
         <div className="flex items-center gap-2">
           {/* Desktop Welcome */}
           <span className="text-sm font-medium hidden sm:block">
@@ -96,6 +101,11 @@ const NavBar = () => {
               <li><button onClick={handleLogout}>Logout</button></li>
             </ul>
           </div>
+        </div>
+      ) : (
+        <div className="flex gap-2">
+          <Link to="/login" className="btn btn-ghost">Login</Link>
+          <Link to="/login" className="btn btn-primary">Sign Up</Link>
         </div>
       )}
     </div>

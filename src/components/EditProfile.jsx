@@ -29,7 +29,7 @@ const EditProfile = ({ user }) => {
         { withCredentials: true },
       );
 
-      dispatch(addUser(res.data.data));
+      dispatch(addUser(res?.data?.data));
       toast.info("Profile Updated Successfully!");
     } catch (error) {
       toast.error(error?.response?.data);
