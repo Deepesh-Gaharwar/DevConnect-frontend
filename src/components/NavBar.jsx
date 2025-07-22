@@ -16,7 +16,7 @@ const NavBar = () => {
     try {
       await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
       dispatch(removeUser());
-      toast.success("Logged Out Successfully!");
+      toast.info("Logged Out Successfully!");
       navigate("/login");
     } catch (error) {
       toast.error(error.message);
