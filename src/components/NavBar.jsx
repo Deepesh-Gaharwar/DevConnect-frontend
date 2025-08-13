@@ -31,8 +31,20 @@ const NavBar = () => {
       bg-base-300/80 backdrop-blur-md border-b border-base-200/30
       shadow-sm hover:bg-base-300/90`}>
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost text-2xl">
-          🕸️ DevConnect
+        <Link
+            to={user?._id ? "/" : "/login"}
+            className="btn btn-ghost text-2xl"
+
+            onClick={(e) => {
+              if (!user?._id) {
+                e.preventDefault(); 
+                toast.warn("Please login to continue!");
+                navigate("/login");
+              }
+            }}
+        >
+         🕸️ DevConnect
+
         </Link>
       </div>
 
