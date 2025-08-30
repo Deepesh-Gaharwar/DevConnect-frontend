@@ -30,7 +30,6 @@ const Body = () => {
       dispatch(addUser(res.data));
       setIsAuthenticated(true);
     } catch (error) {
-      console.error("Authentication failed:", error);
 
       if (error.response?.status === 401) {
         dispatch(addUser(null));
@@ -49,18 +48,21 @@ const Body = () => {
   };
 
   useEffect(() => {
+    // If Redux already has user → no need to hit API
     if (userData && userData._id) {
       setIsAuthenticated(true);
       setLoading(false);
       return;
     }
 
-    if (["/login"].includes(pathname)) {
+    // If on login/signup/forgot-password → don’t hit API
+    if (["/login", "/signup", "/forgot-password"].includes(pathname)) {
       setIsAuthenticated(false);
       setLoading(false);
       return;
     }
 
+    // Otherwise → try fetching user from backend
     fetchUser();
   }, [pathname]);
 
