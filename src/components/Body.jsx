@@ -31,13 +31,14 @@ const Body = () => {
       setIsAuthenticated(true);
     } catch (error) {
 
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 || error.response?.status === 400) {
         dispatch(addUser(null));
         setIsAuthenticated(false);
 
         if (!["/login", "/forgot-password"].includes(pathname)) {
           navigate("/login");
         }
+        
       } else {
         toast.error("Failed to load user. Please try again.");
         setIsAuthenticated(false);
