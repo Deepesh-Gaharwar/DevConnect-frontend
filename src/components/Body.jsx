@@ -29,7 +29,7 @@ const Body = () => {
       return;
     }
 
-    // Always verify auth with backend
+    // Verify auth with backend
     axios
       .get(`${BASE_URL}/profile/view`, { withCredentials: true })
       .then((res) => {
@@ -37,20 +37,24 @@ const Body = () => {
         setLoading(false);
       })
       .catch((error) => {
-        dispatch(removeUser());
-        persistor.purge(); // clear redux-persist
-
-        setLoading(false);
-
+        // Expected case: user is NOT logged in
         if (error.response?.status === 401 || error.response?.status === 400) {
+          dispatch(removeUser());
+          persistor.purge();
+          setLoading(false);
           navigate("/login");
-        } else {
-          toast.error("Failed to verify session. Please login again.");
-          navigate("/login");
+          return; // do NOT treat as error
         }
+
+        // Unexpected error (server down, 500, etc.)
+        dispatch(removeUser());
+        persistor.purge();
+        setLoading(false);
+        toast.error("Please try again! After some time..");
+        navigate("/login");
       });
-      
-  }, [pathname]);
+  }, [pathname, BASE_URL, dispatch, navigate]);
+
 
   if (loading) {
     return (
