@@ -30,7 +30,7 @@ const NavBar = () => {
   };
 
   
-  const isAuthenticated = user?._id && user?._persist?.rehydrated;
+  const isAuthenticated = Boolean(user?._id);
 
   return (
     <div className={`navbar px-4 sticky top-0 z-50 transition-all duration-300

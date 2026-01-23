@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import NavBar from './NavBar';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import Footer from './Footer';
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { addUser } from '../utils/userSlice';
-import { toast } from 'react-toastify';
-import { Loader } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import NavBar from "./NavBar";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import Footer from "./Footer";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice";
+import { persistor } from "../utils/appStore";
+import { toast } from "react-toastify";
+import { Loader } from "lucide-react";
 
 const Body = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -16,55 +17,39 @@ const Body = () => {
   const location = useLocation();
 
   const userData = useSelector((store) => store.user);
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = Boolean(userData?._id);
 
+  const [loading, setLoading] = useState(true);
   const pathname = location.pathname;
 
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get(BASE_URL + "/profile/view", {
-        withCredentials: true,
-      });
+  useEffect(() => {
+    // Public routes → no auth check
+    if (["/login", "/signup", "/forgot-password"].includes(pathname)) {
+      setLoading(false);
+      return;
+    }
 
-      dispatch(addUser(res.data));
-      setIsAuthenticated(true);
-    } catch (error) {
+    // Always verify auth with backend
+    axios
+      .get(`${BASE_URL}/profile/view`, { withCredentials: true })
+      .then((res) => {
+        dispatch(addUser(res.data)); // backend says logged in
+        setLoading(false);
+      })
+      .catch((error) => {
+        dispatch(removeUser());
+        persistor.purge(); // clear redux-persist
 
-      if (error.response?.status === 401 || error.response?.status === 400) {
-        dispatch(addUser(null));
-        setIsAuthenticated(false);
+        setLoading(false);
 
-        if (!["/login", "/forgot-password"].includes(pathname)) {
+        if (error.response?.status === 401 || error.response?.status === 400) {
+          navigate("/login");
+        } else {
+          toast.error("Failed to verify session. Please login again.");
           navigate("/login");
         }
-        
-      } else {
-        toast.error("Failed to load user. Please try again.");
-        setIsAuthenticated(false);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    // If Redux already has user → no need to hit API
-    if (userData && userData._id) {
-      setIsAuthenticated(true);
-      setLoading(false);
-      return;
-    }
-
-    // If on login/signup/forgot-password → don’t hit API
-    if (["/login", "/signup", "/forgot-password"].includes(pathname)) {
-      setIsAuthenticated(false);
-      setLoading(false);
-      return;
-    }
-
-    // Otherwise → try fetching user from backend
-    fetchUser();
+      });
+      
   }, [pathname]);
 
   if (loading) {
@@ -76,25 +61,23 @@ const Body = () => {
     );
   }
 
-  // Show full layout for /forgot-password (like protected routes)
-  // Show partial layout for /login (NavBar shows login/signup)
-  const isLoginRoute = pathname === '/login';
-  const isForgotPasswordRoute = pathname === '/forgot-password';
+  const isLoginRoute = pathname === "/login";
+  const isForgotPasswordRoute = pathname === "/forgot-password";
 
   return (
     <div className="flex flex-col min-h-screen bg-base-100">
       <NavBar />
       <div className="flex-grow px-4 pb-8">
-        {
-          !isLoginRoute && !isForgotPasswordRoute && !isAuthenticated ? (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
-              <Loader className="w-12 h-12 text-primary animate-spin" />
-              <p className="mt-4 text-sm text-gray-500">Redirecting to login...</p>
-            </div>
-          ) : (
-            <Outlet />
-          )
-        }
+        {!isLoginRoute && !isForgotPasswordRoute && !isAuthenticated ? (
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <Loader className="w-12 h-12 text-primary animate-spin" />
+            <p className="mt-4 text-sm text-gray-500">
+              Redirecting to login...
+            </p>
+          </div>
+        ) : (
+          <Outlet />
+        )}
       </div>
       <Footer />
     </div>
