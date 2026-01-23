@@ -1,4 +1,5 @@
 import React from 'react';
+import { persistor } from "../utils/appStore";
 import { useDispatch, useSelector } from 'react-redux';
 import { UserCircle, Menu } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,11 +16,16 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
+
       dispatch(removeUser());
+      await persistor.purge();
+
       toast.info("Logged Out Successfully!");
       navigate("/login");
+
     } catch (error) {
       toast.error(error.message);
+      
     }
   };
 

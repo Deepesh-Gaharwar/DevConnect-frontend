@@ -37,9 +37,12 @@ const Login = () => {
       toast.info(`Welcome back, ${res?.data?.data?.firstName}!`);
 
       navigate('/'); 
+      
     } catch (error) {
+
       setError(error?.response?.data);
       toast.error(error?.response?.data);
+
     } finally {
       setLoading(false); 
     }
