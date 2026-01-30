@@ -284,7 +284,7 @@ const Premium = () => {
             <button
               disabled={loadingPlan !== null}
               onClick={() => handleBuyClick("silver")}
-              className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center ${
+              className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center cursor-pointer ${
                 loadingPlan === "silver"
                   ? "bg-blue-500/50 cursor-not-allowed text-white"
                   : "bg-blue-500 hover:bg-blue-600 text-white"
@@ -354,7 +354,7 @@ const Premium = () => {
             <button
               disabled={loadingPlan !== null}
               onClick={() => handleBuyClick("gold")}
-              className={`w-full py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center ${
+              className={`w-full py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center cursor-pointer ${
                 loadingPlan === "gold"
                   ? "bg-gradient-to-r from-yellow-400/50 to-orange-400/50 cursor-not-allowed text-gray-900"
                   : "bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-gray-900 shadow-lg shadow-yellow-500/20"
