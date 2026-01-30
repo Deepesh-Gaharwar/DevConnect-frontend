@@ -72,7 +72,7 @@ const Premium = () => {
           try {
             // Verify payment on backend
             const verifyRes = await axios.get(
-              BASE_URL + "/payment/verify",
+              BASE_URL + "/premium/verify",
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
