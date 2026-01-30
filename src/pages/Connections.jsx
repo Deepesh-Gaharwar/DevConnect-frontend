@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { addConnections } from '../utils/connectionSlice';
 import { Loader, Users2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Connections = () => {
 
@@ -53,15 +54,26 @@ const Connections = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4">
-      <h1 className="text-center text-4xl font-bold text-white mb-10">Your Connections</h1>
+      <h1 className="text-center text-4xl font-bold text-white mb-10">
+        Your Connections
+      </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {connections.map((connection, index) => {
-          const { firstName, lastName, photoUrl, age, gender, about, skills } = connection;
+        {connections.map((connection) => {
+          const {
+            _id,
+            firstName,
+            lastName,
+            photoUrl,
+            age,
+            gender,
+            about,
+            skills,
+          } = connection;
 
           return (
             <div
-              key={index}
+              key={_id}
               className="flex flex-col md:flex-row items-center gap-6 p-6 bg-base-200 rounded-2xl shadow-lg h-full"
             >
               <div>
@@ -76,8 +88,11 @@ const Connections = () => {
                 <h2 className="text-2xl font-bold text-white">
                   {firstName} {lastName}
                 </h2>
+
                 <h3 className="text-sm text-gray-400">
-                  {age && gender && `${age}, ${gender.charAt(0).toUpperCase() + gender.slice(1)}`}
+                  {age &&
+                    gender &&
+                    `${age}, ${gender.charAt(0).toUpperCase() + gender.slice(1)}`}
                 </h3>
 
                 {skills && skills.length > 0 && (
@@ -95,6 +110,11 @@ const Connections = () => {
 
                 {about && <p className="text-gray-300 mt-2">{about}</p>}
               </div>
+
+              {/* ✅ USE _id INSTEAD OF index */}
+              <Link to={`/chat/${_id}`}>
+                <button className="btn btn-primary rounded-4xl">Chat</button>
+              </Link>
             </div>
           );
         })}

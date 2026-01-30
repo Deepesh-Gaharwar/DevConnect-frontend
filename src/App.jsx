@@ -14,6 +14,7 @@ import ForgotPassword from "./pages/ForgotPassword"
 import { PersistGate } from "redux-persist/integration/react"
 import { Loader } from "lucide-react"
 import Premium from "./pages/Premium"
+import Chat from "./pages/Chat"
 
 function App() {
 
@@ -46,6 +47,7 @@ function App() {
                       <Route path="/requests" element = {<Requests/>}/>
                       <Route path="/forgot-password" element = {<ForgotPassword/>}/>
                       <Route path="/premium" element = {<Premium/>}/>
+                      <Route path="/chat/:targetUserId" element = {<Chat/>}/>
                     
                       <Route path="/login" element = {<Login/>}/>
 
