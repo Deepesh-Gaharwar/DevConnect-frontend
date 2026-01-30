@@ -3,6 +3,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { removeUserFromFeed } from '../utils/feedSlice';
 import { ImageOff } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const UserCard = ({ userInfo }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -21,7 +22,7 @@ const UserCard = ({ userInfo }) => {
       // dispatch an action
       dispatch(removeUserFromFeed(userId));
     } catch (error) {
-      console.error('Error sending request:', error.message);
+      toast.error('Error sending request:', error.message);
     }
   };
 

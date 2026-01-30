@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addRequests, removeRequest } from '../utils/requestSlice';
 import { Loader, MailX  } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const Requests = () => {
 
@@ -37,7 +38,7 @@ const Requests = () => {
 
       dispatch(addRequests(res?.data?.data));
     } catch (error) {
-      console.log(error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false); 
     }

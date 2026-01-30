@@ -1,7 +1,7 @@
 import React from 'react';
 import { persistor } from "../utils/appStore";
 import { useDispatch, useSelector } from 'react-redux';
-import { UserCircle, Menu } from 'lucide-react';
+import { UserCircle, Menu, Crown } from "lucide-react";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { removeUser } from '../utils/userSlice';
@@ -33,24 +33,24 @@ const NavBar = () => {
   const isAuthenticated = Boolean(user?._id);
 
   return (
-    <div className={`navbar px-4 sticky top-0 z-50 transition-all duration-300
+    <div
+      className={`navbar px-4 sticky top-0 z-50 transition-all duration-300
       bg-base-300/80 backdrop-blur-md border-b border-base-200/30
-      shadow-sm hover:bg-base-300/90`}>
+      shadow-sm hover:bg-base-300/90`}
+    >
       <div className="flex-1">
         <Link
-            to={user?._id ? "/" : "/login"}
-            className="btn btn-ghost text-2xl"
-
-            onClick={(e) => {
-              if (!user?._id) {
-                e.preventDefault(); 
-                toast.warn("Please login to continue!");
-                navigate("/login");
-              }
-            }}
+          to={user?._id ? "/" : "/login"}
+          className="btn btn-ghost text-2xl"
+          onClick={(e) => {
+            if (!user?._id) {
+              e.preventDefault();
+              toast.warn("Please login to continue!");
+              navigate("/login");
+            }
+          }}
         >
-         🕸️ DevConnect
-
+          🕸️ DevConnect
         </Link>
       </div>
 
@@ -63,7 +63,11 @@ const NavBar = () => {
 
           {/* Desktop Dropdown */}
           <div className="dropdown dropdown-end hidden sm:block">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar"
+            >
               <div className="w-10 rounded-full overflow-hidden flex items-center justify-center bg-base-200">
                 {user.photoUrl ? (
                   <img alt="user" src={user.photoUrl} />
@@ -81,17 +85,40 @@ const NavBar = () => {
                   Profile <span className="badge">New</span>
                 </Link>
               </li>
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/connections">Connections</Link></li>
-              <li><Link to="/requests/received">Requests</Link></li>
-              <li><Link to="/forgot-password">Forgot Password</Link></li>
-              <li><button onClick={handleLogout}>Logout</button></li>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/connections">Connections</Link>
+              </li>
+              <li>
+                <Link to="/requests">Requests</Link>
+              </li>
+              <li>
+                <Link
+                  to="/premium"
+                  className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent font-semibold"
+                >
+                  <Crown className="w-4 h-4 text-yellow-400" />
+                  Premium
+                </Link>
+              </li>
+              <li>
+                <Link to="/forgot-password">Forgot Password</Link>
+              </li>
+              <li>
+                <button onClick={handleLogout}>Logout</button>
+              </li>
             </ul>
           </div>
 
           {/* Mobile Dropdown */}
           <div className="dropdown dropdown-end sm:hidden">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle"
+            >
               <Menu className="w-6 h-6" />
             </div>
             <ul
@@ -101,7 +128,11 @@ const NavBar = () => {
               <div className="flex justify-center items-center mb-3">
                 <div className="w-20 h-20 rounded-full overflow-hidden bg-base-200 flex items-center justify-center shadow-md">
                   {user.photoUrl ? (
-                    <img alt="user" src={user.photoUrl} className="object-cover w-full h-full" />
+                    <img
+                      alt="user"
+                      src={user.photoUrl}
+                      className="object-cover w-full h-full"
+                    />
                   ) : (
                     <UserCircle className="w-10 h-10 text-gray-500" />
                   )}
@@ -112,18 +143,41 @@ const NavBar = () => {
                   Profile <span className="badge">New</span>
                 </Link>
               </li>
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/connections">Connections</Link></li>
-              <li><Link to="/requests/received">Requests</Link></li>
-              <li><Link to="/forgot-password">Forgot Password</Link></li>
-              <li><button onClick={handleLogout}>Logout</button></li>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/connections">Connections</Link>
+              </li>
+              <li>
+                <Link to="/requests">Requests</Link>
+              </li>
+              <li>
+                <Link
+                  to="/premium"
+                  className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent font-semibold"
+                >
+                  <Crown className="w-4 h-4 text-yellow-400" />
+                  Premium
+                </Link>
+              </li>
+              <li>
+                <Link to="/forgot-password">Forgot Password</Link>
+              </li>
+              <li>
+                <button onClick={handleLogout}>Logout</button>
+              </li>
             </ul>
           </div>
         </div>
       ) : (
         <div className="flex gap-2">
-          <Link to="/login" className="btn btn-ghost">Login</Link>
-          <Link to="/login" className="btn btn-primary">Sign Up</Link>
+          <Link to="/login" className="btn btn-ghost">
+            Login
+          </Link>
+          <Link to="/login" className="btn btn-primary">
+            Sign Up
+          </Link>
         </div>
       )}
     </div>

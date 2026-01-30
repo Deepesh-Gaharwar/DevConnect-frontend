@@ -13,6 +13,7 @@ import Requests from "./pages/Requests"
 import ForgotPassword from "./pages/ForgotPassword"
 import { PersistGate } from "redux-persist/integration/react"
 import { Loader } from "lucide-react"
+import Premium from "./pages/Premium"
 
 function App() {
 
@@ -42,8 +43,9 @@ function App() {
                       
                       <Route path="/profile" element = {<Profile/>}/>
                       <Route path="/connections" element = {<Connections/>}/>
-                      <Route path="/requests/received" element = {<Requests/>}/>
+                      <Route path="/requests" element = {<Requests/>}/>
                       <Route path="/forgot-password" element = {<ForgotPassword/>}/>
+                      <Route path="/premium" element = {<Premium/>}/>
                     
                       <Route path="/login" element = {<Login/>}/>
 
