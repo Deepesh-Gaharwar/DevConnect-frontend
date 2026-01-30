@@ -27,9 +27,11 @@ const Premium = () => {
       if (res.data.isPremium) {
         setIsUserPremium(true);
       }
+
     } catch (err) {
       console.error("Error verifying premium status:", err);
       setError("Failed to verify premium status. Please try again.");
+      
     } finally {
       setCheckingPremium(false);
     }
@@ -68,34 +70,22 @@ const Premium = () => {
         theme: {
           color: "#F37254",
         },
-        handler: async function (response) {
+        handler: async function () {
           try {
-            // Verify payment on backend
-            const verifyRes = await axios.get(
-              BASE_URL + "/premium/verify",
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              },
-              {
-                withCredentials: true,
-              },
+            // Just re-check premium status
+            await verifyPremiumUser();
+
+          } catch (err) {
+            console.error("Premium refresh error:", err);
+            setError(
+              "Payment completed but status update failed. Refresh the page.",
             );
 
-            if (verifyRes.data.success) {
-              // Refresh premium status
-              await verifyPremiumUser();
-            } else {
-              setError("Payment verification failed. Please contact support.");
-            }
-          } catch (err) {
-            console.error("Payment verification error:", err);
-            setError("Payment verification failed. Please contact support.");
           } finally {
             setLoadingPlan(null);
           }
         },
+
         modal: {
           ondismiss: function () {
             setLoadingPlan(null);
