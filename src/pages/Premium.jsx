@@ -71,7 +71,7 @@ const Premium = () => {
         handler: async function (response) {
           try {
             // Verify payment on backend
-            const verifyRes = await axios.post(
+            const verifyRes = await axios.get(
               BASE_URL + "/payment/verify",
               {
                 razorpay_order_id: response.razorpay_order_id,
