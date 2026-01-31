@@ -15,68 +15,90 @@ const Chat = () => {
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  // fetch chat messages
-  const fetchChatMessages = async() => {
-    const chat = await axios.get(BASE_URL+ "/chat/"+targetUserId, 
-      {
-        withCredentials: true,
-      });
-
-    const chatMessages = chat?.data?.messages.map((msg) => {
-      const {senderId, text} = msg;
-
-      return {
-        firstName: senderId?.firstName, 
-        lastName: senderId?.lastName,
-        text,
-      }
-    });
-
-    setMessages(chatMessages);
-  }
-
-  useEffect(() => {
-    fetchChatMessages();
-  })
-
   // keep socket reference
   const socketRef = useRef(null);
 
+  // fetch chat messages
+  const fetchChatMessages = async () => {
+    try {
+      
+      const chat = await axios.get(BASE_URL + "/chat/" + targetUserId, {
+        withCredentials: true,
+      });
+
+      const chatMessages = chat?.data?.messages.map((msg) => {
+        const { senderId, text } = msg;
+
+        return {
+          firstName: senderId?.firstName,
+          lastName: senderId?.lastName,
+          text,
+        };
+      });
+
+      setMessages(chatMessages);
+
+    } catch (error) {
+      
+      console.error("Error fetching chat messages", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!targetUserId) return;
+
+    fetchChatMessages();
+
+  }, [targetUserId]);
+
   // as soon as my page loaded, the socket connection is made and joinCHat event is emitted
   useEffect(() => {
-    if (!userId) {
+    if (!userId || !targetUserId) {
       return;
     }
 
-    const socket = createSocketConnection();
-    socketRef.current = socket;
+    // create socket only once
+    if (!socketRef.current) {
+      socketRef.current = createSocketConnection();
+    }
+
+    const socket = socketRef.current;
 
     // send events to the server
     socket.emit("joinChat", { userId, targetUserId });
 
+    const messageHandler = ({ firstName, lastName, text }) => {
+      setMessages((prev) => [...prev, { firstName, lastName, text }]);
+    };
+
     // client is receiving the messages from server
-    socket.on("messageReceived", ({ firstName, lastName, text }) => {
-      setMessages((messages) => [
-        ...messages,
-        {
-          firstName,
-          lastName,
-          text,
-        },
-      ]);
-    });
+    // socket.on("messageReceived", ({ firstName, lastName, text }) => {
+    //   setMessages((messages) => [
+    //     ...messages,
+    //     {
+    //       firstName,
+    //       lastName,
+    //       text,
+    //     },
+    //   ]);
+    // });
+
+    socket.on("messageReceived", messageHandler);
 
     // as soon as my component unmounts, disconnect from my socket
     return () => {
+      socket.off("messageReceived", messageHandler);
       socket.disconnect();
+      socketRef.current = null;
     };
   }, [userId, targetUserId]);
 
   // sendMessage function
   const sendMessage = () => {
     if (!newMessage.trim()) return;
+    if (!socketRef.current) return;
 
-    const socket =  socketRef.current;
+    const socket = socketRef.current;
 
     socket.emit("sendMessage", {
       firstName: user?.firstName,
@@ -112,7 +134,6 @@ const Chat = () => {
               <div className="chat-footer opacity-50">Seen</div>
             </div>
           );
-
         })}
       </div>
 
@@ -129,6 +150,6 @@ const Chat = () => {
       </div>
     </div>
   );
-};
+};;
 
 export default Chat;
