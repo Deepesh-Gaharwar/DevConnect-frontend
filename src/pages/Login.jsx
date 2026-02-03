@@ -82,8 +82,8 @@ const Login = () => {
             onClick={() => setIsLoginForm(true)}
             className={`w-1/2 py-3 cursor-pointer text-lg font-medium transition-all rounded-none border-b-2 ${
               isLoginForm
-                ? 'border-primary text-primary'
-                : 'border-base-300 text-base-content'
+                ? "border-primary text-primary"
+                : "border-base-300 text-base-content"
             }`}
           >
             Login
@@ -92,8 +92,8 @@ const Login = () => {
             onClick={() => setIsLoginForm(false)}
             className={`w-1/2 py-3 cursor-pointer text-lg font-medium transition-all rounded-none border-b-2 ${
               !isLoginForm
-                ? 'border-primary text-primary'
-                : 'border-base-300 text-base-content'
+                ? "border-primary text-primary"
+                : "border-base-300 text-base-content"
             }`}
           >
             Sign Up
@@ -103,7 +103,7 @@ const Login = () => {
         {/* Form Body */}
         <div className="card-body space-y-4 min-h-[400px]">
           <h2 className="text-center text-2xl font-semibold text-primary">
-            {isLoginForm ? 'Login' : 'Sign Up'}
+            {isLoginForm ? "Login" : "Sign Up"}
           </h2>
 
           {/* Conditionally show Name inputs for Sign Up */}
@@ -140,10 +140,10 @@ const Login = () => {
               placeholder="example@mail.com"
               className={`input w-full ${
                 emailId.length === 0
-                  ? 'input-bordered'
+                  ? "input-bordered"
                   : isEmailValid
-                  ? 'input-success'
-                  : 'input-bordered'
+                    ? "input-success"
+                    : "input-bordered"
               }`}
               required
               onChange={(e) => setEmailId(e.target.value)}
@@ -155,15 +155,15 @@ const Login = () => {
             <span className="label-text mb-1">Password</span>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
                 placeholder="••••••••"
                 className={`input w-full pr-12 ${
                   password.length === 0
-                    ? 'input-bordered'
+                    ? "input-bordered"
                     : isPasswordStrong
-                    ? 'input-success'
-                    : 'input-bordered'
+                      ? "input-success"
+                      : "input-bordered"
                 }`}
                 required
                 onChange={(e) => setPassword(e.target.value)}
@@ -180,6 +180,18 @@ const Login = () => {
             </div>
           </label>
 
+          {/* Forgot Password */}
+          {isLoginForm && (
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          )}
+
           {/* Error message */}
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
@@ -193,9 +205,9 @@ const Login = () => {
               {loading ? (
                 <Loader className="animate-spin w-5 h-5" />
               ) : isLoginForm ? (
-                'Login'
+                "Login"
               ) : (
-                'Sign up'
+                "Sign up"
               )}
             </button>
           </div>

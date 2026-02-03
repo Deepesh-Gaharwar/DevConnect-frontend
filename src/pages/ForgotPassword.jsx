@@ -1,128 +1,216 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { persistor } from "../utils/appStore";
+import { removeUser } from "../utils/userSlice";
+import axios from "axios";
+import { Mail, Lock, Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import OtpInput from "../components/OtpInput";
 
 const ForgotPassword = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  const [emailId, setEmailId] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSubmit = async () => {
-    setError('');
 
-    if ((emailId && oldPassword) || (!emailId && !oldPassword)) {
-      setError('Please provide either your email or old password — not both.');
-      return;
+  const [step, setStep] = useState("EMAIL"); // EMAIL | OTP | RESET
+  const [emailId, setEmailId] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // step 1 — send otp
+  const sendOtp = async () => {
+    try {
+      setLoading(true);
+
+      await axios.post(`${BASE_URL}/profile/forgot-password/send-otp`, {
+        emailId,
+      });
+
+      toast.success("OTP sent to your email");
+      setStep("OTP");
+    } catch (err) {
+      const res = err?.response;
+      if (res?.status === 429 && res.data?.retryAfter) {
+        toast.error(
+          `Too many attempts. Try again after ${new Date(
+            res.data.retryAfter,
+          ).toLocaleString()}`,
+        );
+      } else {
+        toast.error(res?.data || "Failed to send OTP");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }  
+
+  // step 2 — verify otp
+  const verifyOtp = async () => {
+    try {
+      setLoading(true);
+
+      await axios.post(`${BASE_URL}/profile/forgot-password/verify-otp`, {
+        emailId,
+        otp,
+      });
+
+      toast.success("OTP verified");
+      setStep("RESET");
+    } catch (err) {
+      const res = err?.response;
+
+      if (res?.status === 429 && res.data?.retryAfter) {
+        toast.error(
+          `Too many attempts. Try again after ${new Date(
+            res.data.retryAfter,
+          ).toLocaleString()}`,
+        );
+      } else {
+        toast.error(res?.data || "Invalid OTP");
+      }
+
+    } finally {
+      setLoading(false);
     }
 
+  };
+
+  // step 3 — reset password
+  const resetPassword = async () => {
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/profile/forgot-password`,
-        {
-          emailId: emailId || undefined,
-          oldPassword: oldPassword || undefined,
-          newPassword,
-        },
-        { withCredentials: true }
+      setLoading(true);
+
+      await axios.patch(`${BASE_URL}/profile/forgot-password/reset`, {
+        emailId,
+        newPassword,
+      });
+
+      toast.success("Password reset successful");
+
+      setStep("EMAIL");
+      setEmailId("");
+      setOtp("");
+      setNewPassword("");
+
+      await axios.post(BASE_URL + "/logout", {}, { withCredentials: true }); // for clearing the stored token in cookies
+
+      dispatch(removeUser());
+      await persistor.purge();
+
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 900);
+
+    } catch (err) {
+      const res = err?.response;
+
+      toast.error(
+        typeof res?.data === "string" ? res.data : "Password reset failed",
       );
 
-      toast.info(res.data || 'Password updated successfully!');
-      setEmailId('');
-      setOldPassword('');
-      setNewPassword('');
-    } catch (err) {
-      setError(err?.response?.data || 'Something went wrong.');
+    } finally {
+      setLoading(false);
     }
+
   };
 
   return (
-    <div className="w-full min-h-screen flex justify-center items-center bg-base-100 px-4">
-      <div className="card w-full max-w-md bg-base-200 shadow-xl rounded-lg">
-        <div className="card-body space-y-5">
-          <h2 className="card-title justify-center text-2xl font-bold text-primary">Forgot Password</h2>
-
-          <p className="text-center text-sm text-gray-400 -mt-2">
-            Enter <span className="font-semibold">either</span> your email or old password to verify — not both.
-          </p>
-
-          {/* Email Field */}
-          <label className="form-control w-full">
-            <span className="label-text mb-1">Email (optional)</span>
-            <div className="relative">
-              <input
-                type="email"
-                value={emailId}
-                placeholder="example@mail.com"
-                className="input input-bordered w-full pl-10"
-                onChange={(e) => setEmailId(e.target.value)}
-              />
-              <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content" />
-            </div>
-          </label>
-
-          {/* Old Password Field */}
-          <label className="form-control w-full">
-            <span className="label-text mb-1">Old Password (optional)</span>
-            <div className="relative">
-              <input
-                type={showOldPassword ? 'text' : 'password'}
-                value={oldPassword}
-                placeholder="••••••••"
-                className="input input-bordered w-full pl-10 pr-10"
-                onChange={(e) => setOldPassword(e.target.value)}
-              />
-              <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content" />
-              {oldPassword && (
-                <button
-                  type="button"
-                  onClick={() => setShowOldPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                >
-                  {showOldPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                </button>
-              )}
-            </div>
-          </label>
-
-          {/* New Password Field */}
-          <label className="form-control w-full">
-            <span className="label-text mb-1">New Password</span>
-            <div className="relative">
-              <input
-                type={showNewPassword ? 'text' : 'password'}
-                value={newPassword}
-                placeholder="••••••••"
-                className="input input-bordered w-full pl-10 pr-10"
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content" />
-              {newPassword && (
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                >
-                  {showNewPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                </button>
-              )}
-            </div>
-          </label>
-
-          {/* Error Message */}
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
-          {/* Submit Button */}
-          <div className="card-actions justify-center mt-4">
-            <button className="btn btn-primary w-60" onClick={handleSubmit}>
-              Change Password
-            </button>
+    <div className="flex flex-1 items-center justify-center bg-base-100 mt-20">
+      <div className="card w-full max-w-md bg-base-200/90 backdrop-blur border border-base-300 shadow-2xl">
+        <div className="card-body space-y-5 px-8 py-10">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-bold text-primary">Forgot Password</h2>
+            <p className="text-sm text-base-content/70">
+              Enter your email to receive a one-time password
+            </p>
           </div>
+
+          {/* step 1 — email */}
+          {step === "EMAIL" && (
+            <>
+              <label className="form-control w-full space-y-2">
+                <span className="label-text">Email</span>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={emailId}
+                    onChange={(e) => setEmailId(e.target.value)}
+                    disabled={loading}
+                    className="input input-bordered w-full pl-10"
+                    placeholder="example@mail.com"
+                  />
+                  <Mail
+                    className="absolute left-3 top-1/2 -translate-y-1/2"
+                    size={18}
+                  />
+                </div>
+              </label>
+
+              <button
+                className="btn btn-primary w-full flex items-center justify-center gap-2"
+                onClick={sendOtp}
+                disabled={loading || !emailId}
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Sending OTP..." : "Send OTP"}
+              </button>
+            </>
+          )}
+
+          {/* step 2 — OTP */}
+          {step === "OTP" && (
+            <>
+              <label className="form-control">
+                <span className="label-text">Enter OTP</span>
+                <OtpInput value={otp} onChange={setOtp} disabled={loading} />
+              </label>
+
+              <button
+                className="btn btn-primary w-full flex items-center justify-center gap-2"
+                onClick={verifyOtp}
+                disabled={loading || otp.length !== 6}
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Verifying..." : "Verify OTP"}
+              </button>
+            </>
+          )}
+
+          {/* step 3 — reset password */}
+          {step === "RESET" && (
+            <>
+              <label className="form-control">
+                <span className="label-text">New Password</span>
+                <div className="relative">
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    disabled={loading}
+                    className="input input-bordered w-full pl-10"
+                    placeholder="New strong password"
+                  />
+                  <Lock
+                    className="absolute left-3 top-1/2 -translate-y-1/2"
+                    size={18}
+                  />
+                </div>
+              </label>
+
+              <button
+                className="btn btn-primary w-full flex items-center justify-center gap-2"
+                onClick={resetPassword}
+                disabled={loading || !newPassword}
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Resetting..." : "Reset Password"}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
