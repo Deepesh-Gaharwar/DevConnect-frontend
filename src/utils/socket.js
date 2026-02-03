@@ -1,6 +1,16 @@
-import io from "socket.io-client";
+import { io } from "socket.io-client";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+let socket = null;
+
 export const createSocketConnection = () => {
-    return io(BASE_URL);   
+  if (!socket) {
+    socket = io(BASE_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+      autoConnect: true,
+    });
+  }
+  return socket;
 };

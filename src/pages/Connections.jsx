@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { addConnections } from '../utils/connectionSlice';
-import { Loader, Users2 } from 'lucide-react';
+import { Loader, Users2, MessageCircle } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const Connections = () => {
@@ -111,9 +111,12 @@ const Connections = () => {
                 {about && <p className="text-gray-300 mt-2">{about}</p>}
               </div>
 
-              {/* ✅ USE _id INSTEAD OF index */}
+              {/* chat */}
               <Link to={`/chat/${_id}`}>
-                <button className="btn btn-primary rounded-4xl">Chat</button>
+                <button className="btn btn-primary rounded-4xl flex items-center gap-2">
+                  <MessageCircle size={18} />
+                  Chat
+                </button>
               </Link>
             </div>
           );

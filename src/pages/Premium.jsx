@@ -9,6 +9,7 @@ const Premium = () => {
   const [loadingPlan, setLoadingPlan] = useState(null);
   const [error, setError] = useState("");
   const [checkingPremium, setCheckingPremium] = useState(true);
+  const [membershipType, setMembershipType] = useState(null); // "silver" | "gold"
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
@@ -26,12 +27,11 @@ const Premium = () => {
 
       if (res.data.isPremium) {
         setIsUserPremium(true);
+        setMembershipType(res.data.membershipType);
       }
-
     } catch (err) {
       console.error("Error verifying premium status:", err);
       setError("Failed to verify premium status. Please try again.");
-      
     } finally {
       setCheckingPremium(false);
     }
@@ -74,13 +74,11 @@ const Premium = () => {
           try {
             // Just re-check premium status
             await verifyPremiumUser();
-
           } catch (err) {
             console.error("Premium refresh error:", err);
             setError(
               "Payment completed but status update failed. Refresh the page.",
             );
-
           } finally {
             setLoadingPlan(null);
           }
@@ -129,6 +127,8 @@ const Premium = () => {
 
   // Premium Active State
   if (isUserPremium) {
+    const isGold = membershipType === "gold";
+
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 py-12">
         <motion.div
@@ -137,43 +137,72 @@ const Premium = () => {
           transition={{ duration: 0.5 }}
           className="max-w-2xl w-full"
         >
-          <div className="bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 text-center border border-gray-700">
-            {/* Crown Icon */}
+          <div
+            className={`rounded-2xl shadow-xl p-8 md:p-12 text-center border ${
+              isGold
+                ? "bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/40"
+                : "bg-gray-800 border-gray-700"
+            }`}
+          >
+            {/* Icon */}
             <div className="flex justify-center mb-6">
-              <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 p-4 rounded-full">
-                <Crown className="w-12 h-12 text-white" />
+              <div
+                className={`p-4 rounded-full ${
+                  isGold
+                    ? "bg-gradient-to-br from-yellow-400 to-orange-500"
+                    : "bg-gradient-to-br from-blue-400 to-blue-600"
+                }`}
+              >
+                {isGold ? (
+                  <Crown className="w-12 h-12 text-white" />
+                ) : (
+                  <Shield className="w-12 h-12 text-white" />
+                )}
               </div>
             </div>
 
             {/* Title */}
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              You're a Premium Member!
+              You're a {isGold ? "Gold" : "Silver"} Member!
             </h1>
+
             <p className="text-gray-400 text-lg mb-8">
-              Enjoy unlimited connections and exclusive perks
+              {isGold
+                ? "Enjoy unlimited connections and premium benefits"
+                : "Enjoy enhanced access and verified perks"}
             </p>
 
             {/* Benefits */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-gray-700/50 p-4 rounded-xl border border-gray-600">
-                <Zap className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                <Zap
+                  className={`w-8 h-8 mx-auto mb-2 ${
+                    isGold ? "text-yellow-400" : "text-blue-400"
+                  }`}
+                />
                 <p className="text-sm font-medium text-gray-200">
-                  Unlimited Requests
+                  {isGold ? "Unlimited Requests" : "100 Requests / Day"}
                 </p>
               </div>
+
               <div className="bg-gray-700/50 p-4 rounded-xl border border-gray-600">
                 <Shield className="w-8 h-8 text-green-400 mx-auto mb-2" />
                 <p className="text-sm font-medium text-gray-200">
                   Verified Badge
                 </p>
               </div>
+
               <div className="bg-gray-700/50 p-4 rounded-xl border border-gray-600">
                 <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-2" />
                 <p className="text-sm font-medium text-gray-200">
-                  Exclusive Features
+                  {isGold ? "Exclusive Gold Features" : "Silver Features"}
                 </p>
               </div>
             </div>
+
+            <p className="text-gray-400 mt-8 text-sm">
+              Valid for {isGold ? "6 months" : "3 months"}
+            </p>
           </div>
         </motion.div>
       </div>
@@ -375,6 +404,6 @@ const Premium = () => {
       </div>
     </div>
   );
-};
+};;
 
 export default Premium;

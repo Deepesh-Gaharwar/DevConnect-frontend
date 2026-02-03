@@ -13,6 +13,16 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const membershipType = user?.membershipType; // "silver" | "gold"
+
+  // premium Ring logic
+  const premiumRing =
+    membershipType === "gold"
+      ? "ring-2 ring-yellow-400 ring-offset-2 ring-offset-base-300"
+      : membershipType === "silver"
+        ? "ring-2 ring-[#2563EB] ring-offset-2 ring-offset-base-300"
+        : "";
+
   const handleLogout = async () => {
     try {
       await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
@@ -22,14 +32,11 @@ const NavBar = () => {
 
       toast.info("Logged Out Successfully!");
       navigate("/login");
-
     } catch (error) {
       toast.error(error.message);
-      
     }
   };
 
-  
   const isAuthenticated = Boolean(user?._id);
 
   return (
@@ -68,7 +75,9 @@ const NavBar = () => {
               role="button"
               className="btn btn-ghost btn-circle avatar"
             >
-              <div className="w-10 rounded-full overflow-hidden flex items-center justify-center bg-base-200">
+              <div
+                className={`w-10 rounded-full  overflow-hidden flex items-center justify-center bg-base-200 ${premiumRing}`}
+              >
                 {user.photoUrl ? (
                   <img alt="user" src={user.photoUrl} />
                 ) : (
@@ -81,19 +90,23 @@ const NavBar = () => {
               className="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-64 p-4 shadow text-base gap-2"
             >
               <li>
+                <Link to="/">Home</Link>
+              </li>
+
+              <li>
                 <Link to="/profile" className="justify-between">
                   Profile <span className="badge">New</span>
                 </Link>
               </li>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
+
               <li>
                 <Link to="/connections">Connections</Link>
               </li>
+
               <li>
                 <Link to="/requests">Requests</Link>
               </li>
+
               <li>
                 <Link
                   to="/premium"
@@ -103,9 +116,11 @@ const NavBar = () => {
                   Premium
                 </Link>
               </li>
+
               <li>
                 <Link to="/forgot-password">Forgot Password</Link>
               </li>
+
               <li>
                 <button onClick={handleLogout}>Logout</button>
               </li>
@@ -126,7 +141,9 @@ const NavBar = () => {
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-64 px-5 py-6 shadow text-sm gap-3"
             >
               <div className="flex justify-center items-center mb-3">
-                <div className="w-20 h-20 rounded-full overflow-hidden bg-base-200 flex items-center justify-center shadow-md">
+                <div
+                  className={`w-20 h-20 rounded-full overflow-hidden bg-base-200 flex items-center justify-center shadow-md ${premiumRing}`}
+                >
                   {user.photoUrl ? (
                     <img
                       alt="user"
@@ -139,19 +156,23 @@ const NavBar = () => {
                 </div>
               </div>
               <li>
+                <Link to="/">Home</Link>
+              </li>
+
+              <li>
                 <Link to="/profile" className="justify-between">
                   Profile <span className="badge">New</span>
                 </Link>
               </li>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
+
               <li>
                 <Link to="/connections">Connections</Link>
               </li>
+
               <li>
                 <Link to="/requests">Requests</Link>
               </li>
+
               <li>
                 <Link
                   to="/premium"
@@ -161,13 +182,17 @@ const NavBar = () => {
                   Premium
                 </Link>
               </li>
+
               <li>
                 <Link to="/forgot-password">Forgot Password</Link>
               </li>
+
               <li>
                 <button onClick={handleLogout}>Logout</button>
               </li>
+
             </ul>
+            
           </div>
         </div>
       ) : (
@@ -182,6 +207,6 @@ const NavBar = () => {
       )}
     </div>
   );
-};
+};;
 
 export default NavBar;
