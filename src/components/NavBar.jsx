@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 import { persistor } from "../utils/appStore";
-import { useDispatch, useSelector } from 'react-redux';
-import { UserCircle, Menu, Crown } from "lucide-react";
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { removeUser } from '../utils/userSlice';
-import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from "react-redux";
+import { UserCircle, Menu, Crown, Github } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { removeUser } from "../utils/userSlice";
+import { toast } from "react-toastify";
 
 const NavBar = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -13,200 +13,134 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const membershipType = user?.membershipType; // "silver" | "gold"
+  const isAuthenticated = Boolean(user?._id);
+  const membershipType = user?.membershipType;
 
-  // premium Ring logic
   const premiumRing =
     membershipType === "gold"
       ? "ring-2 ring-yellow-400 ring-offset-2 ring-offset-base-300"
       : membershipType === "silver"
-        ? "ring-2 ring-[#2563EB] ring-offset-2 ring-offset-base-300"
+        ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-base-300"
         : "";
 
   const handleLogout = async () => {
     try {
-      await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
-
+      await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
       dispatch(removeUser());
       await persistor.purge();
-
-      toast.info("Logged Out Successfully!");
+      toast.success("Logged out successfully");
       navigate("/login");
-    } catch (error) {
-      toast.error(error.message);
+    } catch (err) {
+      toast.error("Logout failed");
     }
   };
 
-  const isAuthenticated = Boolean(user?._id);
+  const MenuItems = () => (
+    <>
+      <li>
+        <Link to="/">Home</Link>
+      </li>
+      <li>
+        <Link to="/profile">Profile</Link>
+      </li>
+      <li>
+        <Link to="/connections">Connections</Link>
+      </li>
+      <li>
+        <Link to="/requests">Requests</Link>
+      </li>
+      <li>
+        <Link
+          to="/premium"
+          className="flex items-center gap-2 text-yellow-500 font-semibold"
+        >
+          <Crown size={16} />
+          Premium
+        </Link>
+      </li>
+      <li>
+        <Link to="/forgot-password">Forgot Password</Link>
+      </li>
+      <li>
+        <button onClick={handleLogout}>Logout</button>
+      </li>
+    </>
+  );
 
   return (
     <div
-      className={`navbar px-4 sticky top-0 z-50 transition-all duration-300
-      bg-base-300/80 backdrop-blur-md border-b border-base-200/30
-      shadow-sm hover:bg-base-300/90`}
+      className="navbar sticky top-0 z-50 px-3 sm:px-6
+      bg-base-300/80 backdrop-blur-md border-b border-base-200"
     >
-      <div className="flex-1">
+      {/* LOGO */}
+      <div className="flex-1 min-w-0">
         <Link
-          to={user?._id ? "/" : "/login"}
-          className="btn btn-ghost text-2xl"
-          onClick={(e) => {
-            if (!user?._id) {
-              e.preventDefault();
-              toast.warn("Please login to continue!");
-              navigate("/login");
-            }
-          }}
+          to={isAuthenticated ? "/" : "/login"}
+          className="btn btn-ghost text-xl sm:text-2xl truncate"
         >
           🕸️ DevConnect
         </Link>
       </div>
 
+      {/* RIGHT SIDE */}
       {isAuthenticated ? (
         <div className="flex items-center gap-2">
-          {/* Desktop Welcome */}
-          <span className="text-sm font-medium hidden sm:block">
+          {/* Welcome text (desktop only) */}
+          <span className="hidden lg:block text-sm font-medium">
             Welcome, {user.firstName}
           </span>
 
-          {/* Desktop Dropdown */}
+          {/* Desktop Avatar */}
           <div className="dropdown dropdown-end hidden sm:block">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar"
-            >
-              <div
-                className={`w-10 rounded-full  overflow-hidden flex items-center justify-center bg-base-200 ${premiumRing}`}
-              >
+            <div tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <div className={`w-10 rounded-full bg-base-200 ${premiumRing}`}>
                 {user.photoUrl ? (
-                  <img alt="user" src={user.photoUrl} />
+                  <img src={user.photoUrl} alt="user" />
                 ) : (
                   <UserCircle className="w-8 h-8 text-gray-500" />
                 )}
               </div>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-md dropdown-content bg-base-100 rounded-box z-10 mt-3 w-64 p-4 shadow text-base gap-2"
-            >
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-
-              <li>
-                <Link to="/profile" className="justify-between">
-                  Profile <span className="badge">New</span>
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/connections">Connections</Link>
-              </li>
-
-              <li>
-                <Link to="/requests">Requests</Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/premium"
-                  className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent font-semibold"
-                >
-                  <Crown className="w-4 h-4 text-yellow-400" />
-                  Premium
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/forgot-password">Forgot Password</Link>
-              </li>
-
-              <li>
-                <button onClick={handleLogout}>Logout</button>
-              </li>
+            <ul className="menu dropdown-content bg-base-100 rounded-box w-60 p-3 shadow">
+              <MenuItems />
             </ul>
           </div>
 
-          {/* Mobile Dropdown */}
+          {/* Mobile Menu */}
           <div className="dropdown dropdown-end sm:hidden">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle"
-            >
-              <Menu className="w-6 h-6" />
+            <div tabIndex={0} className="btn btn-ghost btn-circle">
+              <Menu />
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-64 px-5 py-6 shadow text-sm gap-3"
-            >
-              <div className="flex justify-center items-center mb-3">
+            <ul className="menu dropdown-content bg-base-100 rounded-box w-64 p-4 shadow">
+              <div className="flex justify-center mb-3">
                 <div
-                  className={`w-20 h-20 rounded-full overflow-hidden bg-base-200 flex items-center justify-center shadow-md ${premiumRing}`}
+                  className={`w-16 h-16 rounded-full bg-base-200 ${premiumRing}`}
                 >
                   {user.photoUrl ? (
-                    <img
-                      alt="user"
-                      src={user.photoUrl}
-                      className="object-cover w-full h-full"
-                    />
+                    <img src={user.photoUrl} alt="user" />
                   ) : (
-                    <UserCircle className="w-10 h-10 text-gray-500" />
+                    <UserCircle className="w-10 h-10 mx-auto mt-3 text-gray-500" />
                   )}
                 </div>
               </div>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-
-              <li>
-                <Link to="/profile" className="justify-between">
-                  Profile <span className="badge">New</span>
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/connections">Connections</Link>
-              </li>
-
-              <li>
-                <Link to="/requests">Requests</Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/premium"
-                  className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent font-semibold"
-                >
-                  <Crown className="w-4 h-4 text-yellow-400" />
-                  Premium
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/forgot-password">Forgot Password</Link>
-              </li>
-
-              <li>
-                <button onClick={handleLogout}>Logout</button>
-              </li>
-
+              <MenuItems />
             </ul>
-            
           </div>
         </div>
       ) : (
-        <div className="flex gap-2">
-          <Link to="/login" className="btn btn-ghost">
+        <div className="flex flex-wrap items-center gap-2">
+
+          <Link to="/login" className="btn btn-ghost btn-sm sm:btn-md">
             Login
           </Link>
-          <Link to="/login" className="btn btn-primary">
+
+          <Link to="/login" className="btn btn-primary btn-sm sm:btn-md">
             Sign Up
           </Link>
         </div>
       )}
     </div>
   );
-};;
+};
 
 export default NavBar;

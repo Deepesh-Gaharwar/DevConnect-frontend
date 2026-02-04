@@ -28,37 +28,36 @@ const Chat = () => {
   const chatContainerRef = useRef(null);
   const initialLoadRef = useRef(true);
   const scrollTimeoutRef = useRef(null);
-  const bottomRef = useRef(null);
-
 
 
   // auto scroll
-  useEffect(() => {
-    if (!messages.length || !bottomRef.current) return;
+ useEffect(() => {
+   const container = chatContainerRef.current;
+   if (!container || !messages.length) return;
 
-    // FIRST LOAD - force scroll
-    if (initialLoadRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "auto" });
-      initialLoadRef.current = false;
-      return;
-    }
+   // FIRST LOAD → force scroll to bottom INSIDE container
+   if (initialLoadRef.current) {
+     requestAnimationFrame(() => {
+       container.scrollTop = container.scrollHeight;
+       initialLoadRef.current = false;
+     });
+     return;
+   }
 
-    // prevent jump when loading old messages
-    if (loadingOld) return;
+   // prevent jump when loading old messages
+   if (loadingOld) return;
 
-    // new message logic
-    const container = chatContainerRef.current;
-    if (!container) return;
+   // scroll only if user is near bottom
+   const threshold = 120;
+   const isNearBottom =
+     container.scrollHeight - container.scrollTop - container.clientHeight <
+     threshold;
 
-    const threshold = 100;
-    const isNearBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight <
-      threshold;
+   if (isNearBottom) {
+     container.scrollTop = container.scrollHeight;
+   }
+ }, [messages, loadingOld]);
 
-    if (isNearBottom) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, loadingOld]);
 
 
   // fetch target user details
@@ -120,7 +119,12 @@ const Chat = () => {
 
     setMessages([]);
     setHasMore(true);
-    initialLoadRef.current = true; // reset
+    initialLoadRef.current = true;
+
+    // reset scroll position
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = 0;
+    }
 
     fetchLastSeen();
     fetchChatMessages();
@@ -324,8 +328,6 @@ const Chat = () => {
           );
         })}
 
-        {/* required for auto scroll */}
-        <div ref={bottomRef} className="h-1 w-full" />
       </div>
 
       {/* INPUT */}
