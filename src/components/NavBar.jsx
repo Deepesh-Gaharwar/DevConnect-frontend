@@ -129,12 +129,17 @@ const NavBar = () => {
         </div>
       ) : (
         <div className="flex flex-wrap items-center gap-2">
-
-          <Link to="/login" className="btn btn-ghost btn-sm sm:btn-md">
+          <Link
+            to="/login?mode=login"
+            className="btn btn-ghost btn-sm sm:btn-md"
+          >
             Login
           </Link>
 
-          <Link to="/login" className="btn btn-primary btn-sm sm:btn-md">
+          <Link
+            to="/login?mode=signup"
+            className="btn btn-primary btn-sm sm:btn-md"
+          >
             Sign Up
           </Link>
         </div>
