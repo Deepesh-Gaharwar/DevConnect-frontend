@@ -70,7 +70,7 @@ const NavBar = () => {
   return (
     <div
       className="navbar sticky top-0 z-50 px-3 sm:px-6
-      bg-base-300/80 backdrop-blur-md border-b border-base-200"
+      bg-base-300/80 backdrop-blur-md border-b border-base-200 shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
     >
       {/* LOGO */}
       <div className="flex-1 min-w-0">
